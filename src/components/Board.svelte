@@ -5,6 +5,7 @@
 	import Link from './Link.svelte';
 	import Note from './Note.svelte';
 	import Group from './Group.svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	let parent;
 	let parentPosition;
@@ -37,12 +38,29 @@
 		}
 	}
 
+	// console.log(localStorage.getItem('Tasks'));
+
 	let tasks = [],
 		links = [],
 		notes = [],
 		groups = [];
 	function handleTask() {
-		tasks = [...tasks, { text: 'Task', checked: false }];
+		tasks = [
+			...tasks,
+			{
+				id: uuidv4(),
+				text: 'Task',
+				checked: false,
+				coordinates: { x: 0, y: 0 },
+				subs: [
+					{ is: 'task', text: 'Task', checked: false },
+					{ is: 'link', link: 'https://www.google.com/', linkName: 'Google' },
+					{ is: 'note', text: 'Note' }
+				]
+			}
+		];
+
+		localStorage.setItem('Tasks', JSON.stringify(tasks));
 	}
 
 	function handleLink() {
@@ -89,6 +107,9 @@
 
 	// No need to store the parent after load, use parent directly
 	onMount(() => {
+		tasks = JSON.parse(localStorage.getItem('Tasks'));
+		console.log(tasks);
+
 		let canDrag;
 		let isMiddleButton;
 		windowWidth = window.innerWidth;
@@ -147,6 +168,12 @@
 	{#each groups as group}
 		<Group {group} {parent} />
 	{/each}
+
+	<!-- <button
+		on:click={() => {
+			console.log(uuidv4());
+		}}>click me</button
+	> -->
 </div>
 
 <style>

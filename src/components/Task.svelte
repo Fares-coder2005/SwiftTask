@@ -9,7 +9,7 @@
 	let canDrag = false;
 	let elmnt;
 	let startDragPosition = { x: 0, y: 0 };
-	let initialPosition = { x: 0, y: 0 };
+	let initialPosition = task.coordinates || { x: 0, y: 0 };
 
 	function handleMouseDown(e) {
 		if (e.button !== 0) return;
@@ -21,6 +21,27 @@
 
 	function handleMouseUp() {
 		canDrag = false;
+
+		// Get the updated coordinates
+		const xCoordinate = parseFloat(elmnt.style.left);
+		const yCoordinate = parseFloat(elmnt.style.top);
+
+		// Retrieve the tasks from localStorage
+		let storedTasks = JSON.parse(localStorage.getItem('Tasks')) || [];
+
+		// Find the task in the stored tasks array and update its coordinates
+		storedTasks = storedTasks.map((storedTask) => {
+			if (storedTask.id === task.id) {
+				return {
+					...storedTask,
+					coordinates: { x: xCoordinate, y: yCoordinate }
+				};
+			}
+			return storedTask;
+		});
+
+		// Save the updated tasks back to localStorage
+		localStorage.setItem('Tasks', JSON.stringify(storedTasks));
 	}
 
 	function handleMouseMove(e) {
@@ -42,6 +63,8 @@
 	// }
 
 	onMount(() => {
+		elmnt.style.left = `${task.coordinates.x}px`;
+		elmnt.style.top = `${task.coordinates.y}px`;
 		document.addEventListener('mouseup', handleMouseUp);
 		document.addEventListener('mousemove', handleMouseMove);
 	});
@@ -59,12 +82,42 @@
 			<input type="checkbox" bind:checked />
 			{text}
 		</label>
+
 		<div class="btns flex justify-center items-center flex-row">
 			<button class="deleteBtn bg-red-500 px-2 h-8 flex justify-center items-center">
 				Delete
 			</button>
 			<button class="editBtn bg-blue-500 px-2 h-8 flex justify-center items-center"> Edit </button>
 		</div>
+	</div>
+	<div class="subs translate-x-8">
+		{#each task.subs as sub}
+			<div class="sub">
+				<div class="bolge" aria-hidden="true" on:mousedown={handleMouseDown}></div>
+				<div class="content">
+					{#if sub.is == 'task'}
+						<label class="label bg-lime-500">
+							<input type="checkbox" checked={sub.checked} />
+							{sub.text}
+						</label>
+					{:else if sub.is == 'link'}
+						<a class="label bg-lime-500" target="_blank" href={sub.link}>
+							{sub.linkName}
+						</a>
+					{:else if sub.is == 'note'}
+						<p class="label bg-lime-500">{sub.text}</p>
+					{/if}
+					<div class="btns flex justify-center items-center flex-row">
+						<button class="deleteBtn bg-red-500 px-2 h-8 flex justify-center items-center">
+							Delete
+						</button>
+						<button class="editBtn bg-blue-500 px-2 h-8 flex justify-center items-center">
+							Edit
+						</button>
+					</div>
+				</div>
+			</div>
+		{/each}
 	</div>
 </div>
 
@@ -74,6 +127,11 @@
 		display: grid;
 		grid-template-columns: 2rem auto; /* First column is 2rem, second adjusts based on content */
 		/* gap: 1rem; Optional: Adds space between the two sections */
+	}
+
+	.sub {
+		display: grid;
+		grid-template-columns: 2rem auto; /* First column is 2rem, second adjusts based on content */
 	}
 	.bolge {
 		height: 100%;
@@ -88,13 +146,6 @@
 		flex-direction: row;
 		border: 1px solid black;
 	}
-
-	/* .btns {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: row;
-	} */
 
 	.label {
 		display: flex;
