@@ -50,18 +50,37 @@
 
 <div bind:this={elmnt} class="elmnt">
 	<div class="bolge" aria-hidden="true" on:mousedown={handleMouseDown}></div>
-	<p>{note.text}</p>
+	<div class="content">
+		<p class="bg-lime-500">{note.text}</p>
+		<div class="btns flex justify-center items-center flex-row">
+			<button class="deleteBtn bg-red-500 px-2 h-8 flex justify-center items-center">
+				Delete
+			</button>
+			<button class="editBtn bg-blue-500 px-2 h-8 flex justify-center items-center"> Edit </button>
+		</div>
+	</div>
 </div>
 
 <style>
 	.elmnt {
 		position: absolute;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		display: grid;
+		grid-template-columns: 2rem auto; /* First column is 2rem, second adjusts based on content */
+		/* gap: 1rem; Optional: Adds space between the two sections */
+	}
+	.bolge {
+		height: 100%;
+		background-color: black;
 		cursor: grab;
 	}
 
+	.content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+		border: 1px solid black;
+	}
 	p {
 		display: flex;
 		justify-content: center;
@@ -69,13 +88,6 @@
 		width: 12rem;
 		height: 2rem;
 		font-size: 1rem;
-		border: 1px solid black;
-		user-select: none;
-	}
-
-	.bolge {
-		height: 2rem;
-		aspect-ratio: 1/1;
-		background-color: black;
+		/* user-select: none; */
 	}
 </style>

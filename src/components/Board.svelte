@@ -4,6 +4,7 @@
 	import Task from './Task.svelte';
 	import Link from './Link.svelte';
 	import Note from './Note.svelte';
+	import Group from './Group.svelte';
 
 	let parent;
 	let parentPosition;
@@ -27,6 +28,10 @@
 				handleNote();
 				break;
 
+			case 'Group':
+				handleGroup();
+				break;
+
 			default:
 				break;
 		}
@@ -34,7 +39,8 @@
 
 	let tasks = [],
 		links = [],
-		notes = [];
+		notes = [],
+		groups = [];
 	function handleTask() {
 		tasks = [...tasks, { text: 'Task', checked: false }];
 	}
@@ -45,6 +51,10 @@
 
 	function handleNote() {
 		notes = [...notes, { text: 'Note' }];
+	}
+
+	function handleGroup() {
+		groups = [...groups, { name: 'Group' }];
 	}
 
 	let parentStartPositon = { x: 0, y: 0 };
@@ -132,6 +142,10 @@
 
 	{#each notes as note}
 		<Note {note} {parent} />
+	{/each}
+
+	{#each groups as group}
+		<Group {group} {parent} />
 	{/each}
 </div>
 

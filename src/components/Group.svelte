@@ -1,13 +1,11 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
+	export let group;
 	export let parent;
-	export let task;
-	let text = task.text;
-	let checked = task.checked;
 
-	let canDrag = false;
 	let elmnt;
+	let canDrag = false;
 	let startDragPosition = { x: 0, y: 0 };
 	let initialPosition = { x: 0, y: 0 };
 
@@ -37,10 +35,6 @@
 		}
 	}
 
-	// function handleDelete(params) {
-	// 	handle;
-	// }
-
 	onMount(() => {
 		document.addEventListener('mouseup', handleMouseUp);
 		document.addEventListener('mousemove', handleMouseMove);
@@ -55,10 +49,11 @@
 <div bind:this={elmnt} class="elmnt">
 	<div class="bolge" aria-hidden="true" on:mousedown={handleMouseDown}></div>
 	<div class="content">
-		<label class="label bg-lime-500">
-			<input type="checkbox" bind:checked />
-			{text}
-		</label>
+		<div class="border-1 border-black min-w-52 w-fit min-h-56 bg-lime-500">
+			<p class="flex justify-center items-center w-64 m-2">
+				{group.name}
+			</p>
+		</div>
 		<div class="btns flex justify-center items-center flex-row">
 			<button class="deleteBtn bg-red-500 px-2 h-8 flex justify-center items-center">
 				Delete
@@ -87,27 +82,5 @@
 		align-items: center;
 		flex-direction: row;
 		border: 1px solid black;
-	}
-
-	/* .btns {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: row;
-	} */
-
-	.label {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 12rem;
-		height: 2rem;
-		font-size: 1rem;
-		user-select: none;
-	}
-
-	input {
-		width: 1rem;
-		height: 1rem;
 	}
 </style>

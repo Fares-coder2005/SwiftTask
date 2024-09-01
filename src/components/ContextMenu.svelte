@@ -61,6 +61,11 @@
 			<li class="text-l hover:bg-gray-100 cursor-pointer">
 				<button class=" p-3 w-full h-full" on:click={() => handleSelection('Note')}> Note </button>
 			</li>
+			<li class="text-l hover:bg-gray-100 cursor-pointer">
+				<button class=" p-3 w-full h-full" on:click={() => handleSelection('Group')}>
+					Group
+				</button>
+			</li>
 		</ul>
 	</div>
 {/if}
