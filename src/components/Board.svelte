@@ -5,6 +5,7 @@
 	import Link from './Link.svelte';
 	import Note from './Note.svelte';
 	import Group from './Group.svelte';
+	import Element from './Element.svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	let parent;
@@ -48,15 +49,13 @@
 		tasks = [
 			...tasks,
 			{
-				id: uuidv4(),
 				text: 'Task',
 				checked: false,
-				coordinates: { x: 0, y: 0 },
-				subs: [
-					{ is: 'task', text: 'Task', checked: false },
-					{ is: 'link', link: 'https://www.google.com/', linkName: 'Google' },
-					{ is: 'note', text: 'Note' }
-				]
+				subs: [],
+
+				id: uuidv4(),
+				is: 'task',
+				coordinates: { x: 0, y: 0 }
 			}
 		];
 
@@ -64,11 +63,25 @@
 	}
 
 	function handleLink() {
-		links = [...links, { linkName: 'google', link: 'https://www.google.com/' }];
+		links = [
+			...links,
+			{
+				linkName: 'google',
+				link: 'https://www.google.com/',
+
+				id: uuidv4(),
+				is: 'link',
+				coordinates: { x: 0, y: 0 }
+			}
+		];
+
+		localStorage.setItem('Links', JSON.stringify(links));
 	}
 
 	function handleNote() {
-		notes = [...notes, { text: 'Note' }];
+		notes = [...notes, { text: 'Note', id: uuidv4(), is: 'note', coordinates: { x: 0, y: 0 } }];
+
+		localStorage.setItem('Notes', JSON.stringify(notes));
 	}
 
 	function handleGroup() {
@@ -107,8 +120,10 @@
 
 	// No need to store the parent after load, use parent directly
 	onMount(() => {
-		tasks = JSON.parse(localStorage.getItem('Tasks'));
-		console.log(tasks);
+		tasks = JSON.parse(localStorage.getItem('Tasks')) || [];
+		links = JSON.parse(localStorage.getItem('Links')) || [];
+		notes = JSON.parse(localStorage.getItem('Notes')) || [];
+		// console.log(tasks);
 
 		let canDrag;
 		let isMiddleButton;
@@ -153,20 +168,20 @@
 		<p class="text-3xl font-bold">{selection} was selected</p>
 	{/if}
 
+	{#each groups as group}
+		<Group {group} {parent} />
+	{/each}
+
 	{#each tasks as task}
-		<Task {task} {parent} />
+		<Element prop={task} {parent} />
 	{/each}
 
 	{#each links as link}
-		<Link {link} {parent} />
+		<Element prop={link} {parent} />
 	{/each}
 
 	{#each notes as note}
-		<Note {note} {parent} />
-	{/each}
-
-	{#each groups as group}
-		<Group {group} {parent} />
+		<Element prop={note} {parent} />
 	{/each}
 
 	<!-- <button
